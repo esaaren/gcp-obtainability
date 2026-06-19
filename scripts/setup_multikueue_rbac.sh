@@ -5,10 +5,10 @@ set -e
 # Setup MultiKueue RBAC on workers and create secrets on manager
 # Creates ServiceAccount, ClusterRoleBinding, creates token, and builds kubeconfig
 
-WORKERS=("worker1" "worker2" "worker3" "worker4")
 MANAGER="manager"
+WORKERS=$(kubectl config get-contexts -o name | grep "^worker-cluster-")
 
-for WORKER in "${WORKERS[@]}"; do
+for WORKER in $WORKERS; do
   echo "Setting up MultiKueue RBAC for $WORKER..."
   
   # Create ServiceAccount on worker
