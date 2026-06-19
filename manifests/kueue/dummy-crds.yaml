@@ -1,0 +1,179 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: jobsets.jobset.x-k8s.io
+spec:
+  group: jobset.x-k8s.io
+  names:
+    kind: JobSet
+    plural: jobsets
+    singular: jobset
+  scope: Namespaced
+  versions:
+  - name: v1alpha2
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: mpijobs.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: MPIJob
+    plural: mpijobs
+    singular: mpijob
+  scope: Namespaced
+  versions:
+  - name: v2beta1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: rayclusters.ray.io
+spec:
+  group: ray.io
+  names:
+    kind: RayCluster
+    plural: rayclusters
+    singular: raycluster
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: rayjobs.ray.io
+spec:
+  group: ray.io
+  names:
+    kind: RayJob
+    plural: rayjobs
+    singular: rayjob
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: mxjobs.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: MXJob
+    plural: mxjobs
+    singular: mxjob
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: paddlejobs.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: PaddleJob
+    plural: paddlejobs
+    singular: paddlejob
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: pytorchjobs.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: PyTorchJob
+    plural: pytorchjobs
+    singular: pytorchjob
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: tfjobs.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: TFJob
+    plural: tfjobs
+    singular: tfjob
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: xgboostjobs.kubeflow.org
+spec:
+  group: kubeflow.org
+  names:
+    kind: XGBoostJob
+    plural: xgboostjobs
+    singular: xgboostjob
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
