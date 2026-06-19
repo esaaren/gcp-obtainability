@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: dummy-job
-        image: gcr.io/google-containers/busybox:latest
+        image: curlimages/curl:latest
         command: ["/bin/sh", "-c", "echo 'Running job in region:' && curl -s http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google' && echo && sleep 30"]
         resources:
           requests:

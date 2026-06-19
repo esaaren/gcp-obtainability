@@ -18,7 +18,7 @@ spec:
         command:
         - /bin/sh
         - -c
-        - "echo 'Running GPU job...' && nvidia-smi && sleep 60"
+        - "apt-get update && apt-get install -y curl && echo 'Running GPU job in zone:' && curl -s http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google' && echo && nvidia-smi && sleep 60"
         resources:
           requests:
             cpu: "2"

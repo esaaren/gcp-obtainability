@@ -9,11 +9,12 @@ In a world where obtaining specific hardware resources can be heavily constraine
 The environment relies on a hub-and-spoke multi-cluster architecture built with Google Kubernetes Engine (GKE) Autopilot and [Kueue/MultiKueue](https://kueue.sigs.k8s.io/).
 
 - **Manager Cluster**: The central control plane. It hosts the Kueue and MultiKueue components. It intercepts incoming Jobs, checks global capacity logic, and dispatches workloads to available worker clusters.
-- **Worker Clusters**: Geographically distributed GKE Autopilot clusters where the workloads actually execute.
-  - `worker1` (us-central1)
-  - `worker2` (us-east1)
-  - `worker3` (europe-west1)
-  - `worker4` (us-west1)
+- **Worker Clusters**: Geographically distributed GKE Autopilot clusters where the workloads actually execute. The number and locations of these clusters are dynamically configured via a Terraform list variable. By default, it provisions 4 clusters:
+  - `worker-cluster-us-central1`
+  - `worker-cluster-us-east1`
+  - `worker-cluster-europe-west1`
+  - `worker-cluster-us-west1`
+  *(You can easily scale to 20+ clusters by just adding regions to the `worker_regions` list in `terraform/variables.tf`!)*
 
 All clusters are registered to a central GCP Fleet, allowing seamless cross-cluster communication via Connect Gateway.
 
@@ -88,11 +89,11 @@ kubectl get events -n demo-jobs -w
 ```
 
 For the GPU job, because RTX Pro 6000s are scarce, you will periodically see events iterating through clusters:
-1. `The workload got reservation on "worker1"`
+1. `The workload got reservation on "worker-cluster-us-central1"`
 2. *(Wait 3 minutes for Autopilot scale-up timeout)*
-3. `The workload got reservation on "worker2"`
+3. `The workload got reservation on "worker-cluster-us-east1"`
 4. *(Wait 3 minutes)*
-5. `The workload got reservation on "worker3"`
+5. `The workload got reservation on "worker-cluster-europe-west1"`
 
 Once capacity is successfully obtained on a worker cluster, the Pods will reach the `Running` state and the job will execute to completion!
 
