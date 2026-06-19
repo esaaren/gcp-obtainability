@@ -1,0 +1,24 @@
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: gpu-ondemand-fallback
+spec:
+  priorities:
+    # Priority 1: Try Spot H100 first
+    - machineFamily: a3
+      spot: true
+      gpu:
+        count: 1
+        type: nvidia-h100-80gb
+    # Priority 2: Fall back to Spot RTX 6000
+    - machineFamily: g4
+      spot: true
+      gpu:
+        count: 1
+        type: nvidia-rtx-pro-6000
+    # Priority 3: Fall back to Spot L4
+    - machineFamily: g2
+      spot: true
+      gpu:
+        count: 1
+        type: nvidia-l4

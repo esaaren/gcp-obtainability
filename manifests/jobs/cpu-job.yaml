@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: obtainability-demo-cpu-
+  namespace: demo-jobs
+  labels:
+    kueue.x-k8s.io/queue-name: demo-queue
+spec:
+  parallelism: 2
+  completions: 2
+  template:
+    spec:
+      containers:
+      - name: cpu-job
+        image: curlimages/curl:latest
+        command:
+        - /bin/sh
+        - -c
+        - "echo 'Running CPU job in zone:' && curl -s http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google' && echo && sleep 30"
+        resources:
+          requests:
+            cpu: "2"
+            memory: "4Gi"
+      restartPolicy: Never
