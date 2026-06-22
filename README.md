@@ -114,3 +114,41 @@ kubectl --context manager get jobs -n demo-jobs
 # Delete by name
 kubectl --context manager delete job <JOB_NAME> -n demo-jobs
 ```
+
+## Scaling Beyond Default Clusters
+
+Because this repository uses Terraform `for_each` loops to dynamically provision clusters and bash scripts that dynamically read from `gcloud` to configure Kueue components, scaling this to support more regions is incredibly easy!
+
+To add a new region (e.g. `asia-northeast1` or `southamerica-east1`):
+
+1. **Update Terraform Configuration:** Add your desired regions to the `worker_regions` list in `terraform/variables.tf`:
+   ```hcl
+   variable "worker_regions" {
+     description = "List of regions for worker clusters"
+     type        = list(string)
+     default     = [
+       "us-central1",
+       "us-east1",
+       "europe-west1",
+       "us-west1",
+       "asia-northeast1",   # <-- Add new region here
+       "southamerica-east1" # <-- Add new region here
+     ]
+   }
+   ```
+2. **Apply Terraform:** Run `terraform apply` in the `terraform` directory. This will automatically spin up `worker-cluster-asia-northeast1` and `worker-cluster-southamerica-east1` and register them to the fleet.
+3. **Re-run Setup Scripts:** Run the setup scripts to automatically detect the new clusters, install Kueue, set up the required RBAC, and register them to the manager cluster as `MultiKueueCluster` objects.
+   ```bash
+   ./scripts/setup_kueue.sh
+   ./scripts/setup_multikueue_rbac.sh
+   ./scripts/setup_kueue_manifests.sh
+   ```
+4. **Apply Compute Classes:** Ensure your custom `ComputeClass` is applied to the newly created clusters:
+   ```bash
+   for ctx in $(kubectl config get-contexts -o name | grep "^worker-cluster-"); do
+     kubectl --context $ctx apply -f manifests/compute-classes/gpu-ondemand-fallback.yaml
+   done
+   ```
+
+That's it! Kueue will automatically include the new clusters in the `multikueue-config` and will start routing workloads to them in its horizontal capacity hunting loop.
+
