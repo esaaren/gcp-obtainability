@@ -44,7 +44,8 @@ KUEUE_VERSION="v0.8.0"
   kubectl --context manager apply -f manifests/kueue/dummy-crds.yaml
 
   echo "Waiting for Kueue to be ready on manager..."
-  kubectl --context manager wait --for=condition=ready pod -l app.kubernetes.io/component=controller -n kueue-system --timeout=300s
+  sleep 5
+  kubectl --context manager wait deployment/kueue-controller-manager --for=condition=Available=true -n kueue-system --timeout=300s
   
 WORKERS=$(kubectl config get-contexts -o name | grep "^worker-cluster-")
 
@@ -54,12 +55,13 @@ for WORKER in $WORKERS; do
   
   # Apply dummy CRDs on worker to satisfy MultiKueue watch requirements
   kubectl --context $WORKER apply -f manifests/kueue/dummy-crds.yaml
-
+done
 
 echo "Waiting for Kueue to be ready..."
-kubectl --context manager wait --for=condition=ready pod -n kueue-system -l control-plane=controller-manager --timeout=300s
+sleep 5
+kubectl --context manager wait deployment/kueue-controller-manager --for=condition=Available=true -n kueue-system --timeout=300s
 for ctx in $WORKERS; do
-  kubectl --context $ctx wait --for=condition=ready pod -n kueue-system -l control-plane=controller-manager --timeout=300s
+  kubectl --context $ctx wait deployment/kueue-controller-manager --for=condition=Available=true -n kueue-system --timeout=300s
 done
 
 echo "Kueue installation complete!"

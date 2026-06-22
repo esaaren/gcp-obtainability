@@ -1,7 +1,7 @@
 variable "project_id" {
   description = "The project ID to deploy to"
   type        = string
-  default     = "YOUR_PROJECT_ID"
+  default     = "erik-island-streams"
 }
 
 variable "manager_region" {

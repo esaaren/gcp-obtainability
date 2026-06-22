@@ -26,6 +26,7 @@ resource "google_container_cluster" "manager" {
   network  = google_compute_network.vpc_network.name
 
   enable_autopilot = true
+  deletion_protection = false
 
   depends_on = [google_project_service.container]
 }
@@ -37,6 +38,7 @@ resource "google_container_cluster" "workers" {
   network  = google_compute_network.vpc_network.name
 
   enable_autopilot = true
+  deletion_protection = false
 
   depends_on = [google_project_service.container]
 }
