@@ -23,7 +23,7 @@ All clusters are registered to a central GCP Fleet, allowing seamless cross-clus
 When a Job is submitted to the manager cluster:
 
 1. **Interception**: Kueue intercepts the Job and evaluates it against the global resource quotas (e.g., `cpu`, `memory`, `nvidia.com/gpu`).
-2. **Admission**: The workload is queued and checked via an `AdmissionCheck` resource against a `MultiKueueCluster` pool (`worker1` through `worker4`).
+2. **Admission**: The workload is queued and checked via an `AdmissionCheck` resource against a `MultiKueueCluster` pool of your dynamically provisioned worker clusters.
 3. **Dispatching & Execution**:
    - Kueue dispatches the Job to the first available cluster in the multi-cluster topology.
    - If the worker cluster faces a stockout or GCE resources are unavailable (e.g., `nvidia-rtx-pro-6000` is out of stock in a region), the local Autopilot control plane triggers a scale-up failure.
@@ -38,7 +38,7 @@ When a Job is submitted to the manager cluster:
 - GCP Project configured and authenticated via `gcloud`.
 - `terraform` installed.
 - `kubectl` installed.
-- Pre-configured `kubeconfig` with contexts for `manager`, `worker1`, `worker2`, `worker3`, and `worker4`.
+- Pre-configured `kubeconfig` with contexts for `manager` and all `worker-cluster-*` contexts (the setup scripts will handle configuring these).
 
 ## Running the Demo
 
