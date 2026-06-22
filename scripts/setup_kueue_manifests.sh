@@ -6,6 +6,7 @@ MANAGER="manager"
 WORKERS=$(kubectl config get-contexts -o name | grep "^worker-cluster-")
 
 echo "Applying common flavors and queues to manager..."
+kubectl --context $MANAGER apply -f manifests/kueue-config/manager-config.yaml
 kubectl --context $MANAGER apply -f manifests/kueue-config/common-flavors.yaml
 kubectl --context $MANAGER apply -f manifests/kueue-config/manager-queues.yaml
 
@@ -13,6 +14,7 @@ for WORKER in $WORKERS; do
   echo "Applying common flavors and queues to $WORKER..."
   kubectl --context $WORKER apply -f manifests/kueue-config/common-flavors.yaml
   kubectl --context $WORKER apply -f manifests/kueue-config/worker-queues.yaml
+  kubectl --context $WORKER apply -f manifests/compute-classes/gpu-ondemand-fallback.yaml
 done
 
 echo "Applying MultiKueue configuration to manager..."

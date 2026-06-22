@@ -143,12 +143,5 @@ To add a new region (e.g. `asia-northeast1` or `southamerica-east1`):
    ./scripts/setup_multikueue_rbac.sh
    ./scripts/setup_kueue_manifests.sh
    ```
-4. **Apply Compute Classes:** Ensure your custom `ComputeClass` is applied to the newly created clusters:
-   ```bash
-   for ctx in $(kubectl config get-contexts -o name | grep "^worker-cluster-"); do
-     kubectl --context $ctx apply -f manifests/compute-classes/gpu-ondemand-fallback.yaml
-   done
-   ```
 
 That's it! Kueue will automatically include the new clusters in the `multikueue-config` and will start routing workloads to them in its horizontal capacity hunting loop.
-
