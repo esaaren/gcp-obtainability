@@ -1,0 +1,34 @@
+{{- if eq .Values.clusterType "manager" }}
+{{- range .Values.manager.workers }}
+apiVersion: kueue.x-k8s.io/v1alpha1
+kind: MultiKueueCluster
+metadata:
+  name: {{ . }}
+spec:
+  kubeConfig:
+    location: {{ . }}-kubeconfig
+    locationType: Secret
+---
+{{- end }}
+apiVersion: kueue.x-k8s.io/v1alpha1
+kind: MultiKueueConfig
+metadata:
+  name: multikueue-config
+spec:
+  clusters:
+{{- range .Values.manager.workers }}
+  - {{ . }}
+{{- end }}
+---
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: AdmissionCheck
+metadata:
+  name: multikueue-check
+spec:
+  controllerName: kueue.x-k8s.io/multikueue
+  retryDelayMinutes: 15
+  parameters:
+    apiGroup: kueue.x-k8s.io
+    kind: MultiKueueConfig
+    name: multikueue-config
+{{- end }}

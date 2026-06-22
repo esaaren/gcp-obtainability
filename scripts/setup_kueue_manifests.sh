@@ -5,64 +5,25 @@ set -e
 MANAGER="manager"
 WORKERS=$(kubectl config get-contexts -o name | grep "^worker-cluster-")
 
-echo "Applying common flavors and queues to manager..."
-kubectl --context $MANAGER apply -f manifests/kueue-config/manager-config.yaml
-kubectl --context $MANAGER apply -f manifests/kueue-config/common-flavors.yaml
-kubectl --context $MANAGER apply -f manifests/kueue-config/manager-queues.yaml
-
+echo "Installing Kueue Configs on Manager cluster using Helm..."
+# Build the set arguments for workers
+SET_ARGS=""
+i=0
 for WORKER in $WORKERS; do
-  echo "Applying common flavors and queues to $WORKER..."
-  kubectl --context $WORKER apply -f manifests/kueue-config/common-flavors.yaml
-  kubectl --context $WORKER apply -f manifests/kueue-config/worker-queues.yaml
-  kubectl --context $WORKER apply -f manifests/compute-classes/gpu-ondemand-fallback.yaml
+  SET_ARGS="${SET_ARGS} --set manager.workers[$i]=${WORKER}"
+  i=$((i+1))
 done
 
-echo "Applying MultiKueue configuration to manager..."
-YAML_FILE="/tmp/multikueue-config.yaml"
-> $YAML_FILE
+helm upgrade --install kueue-config helm/kueue-config \
+  --kube-context $MANAGER \
+  --set clusterType=manager \
+  $SET_ARGS
 
 for WORKER in $WORKERS; do
-  cat <<EOF >> $YAML_FILE
-apiVersion: kueue.x-k8s.io/v1alpha1
-kind: MultiKueueCluster
-metadata:
-  name: ${WORKER}
-spec:
-  kubeConfig:
-    location: ${WORKER}-kubeconfig
-    locationType: Secret
----
-EOF
+  echo "Installing Kueue Configs on $WORKER using Helm..."
+  helm upgrade --install kueue-config helm/kueue-config \
+    --kube-context $WORKER \
+    --set clusterType=worker
 done
 
-cat <<EOF >> $YAML_FILE
-apiVersion: kueue.x-k8s.io/v1alpha1
-kind: MultiKueueConfig
-metadata:
-  name: multikueue-config
-spec:
-  clusters:
-EOF
-
-for WORKER in $WORKERS; do
-  echo "  - ${WORKER}" >> $YAML_FILE
-done
-
-cat <<EOF >> $YAML_FILE
----
-apiVersion: kueue.x-k8s.io/v1beta1
-kind: AdmissionCheck
-metadata:
-  name: multikueue-check
-spec:
-  controllerName: kueue.x-k8s.io/multikueue
-  retryDelayMinutes: 15
-  parameters:
-    apiGroup: kueue.x-k8s.io
-    kind: MultiKueueConfig
-    name: multikueue-config
-EOF
-
-kubectl --context $MANAGER apply -f $YAML_FILE
-
-echo "MultiKueue components applied successfully!"
+echo "Kueue configurations applied via Helm successfully!"

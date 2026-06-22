@@ -1,0 +1,10 @@
+# clusterType: manager or worker
+clusterType: worker
+
+manager:
+  timeout: "3m"
+  globalGpuQuota: 100
+  workers: [] # e.g. ["worker-cluster-us-central1", "worker-cluster-europe-west1"]
+
+worker:
+  localGpuQuota: 100

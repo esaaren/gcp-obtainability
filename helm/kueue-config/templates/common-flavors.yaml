@@ -1,0 +1,29 @@
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: ResourceFlavor
+metadata:
+  name: standard
+spec: {}
+---
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: ResourceFlavor
+metadata:
+  name: spot
+spec:
+  nodeLabels:
+    cloud.google.com/gke-provisioning: spot
+  tolerations:
+    - key: cloud.google.com/gke-spot
+      operator: Equal
+      value: "true"
+      effect: NoSchedule
+---
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: ResourceFlavor
+metadata:
+  name: gpu-fallback
+spec: {}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-jobs
