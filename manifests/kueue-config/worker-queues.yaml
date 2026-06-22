@@ -17,7 +17,7 @@ spec:
               nominalQuota: 0
             - name: "ephemeral-storage"
               nominalQuota: 100Gi
-        - name: gpu-rtx6000
+        - name: gpu-fallback
           resources:
             - name: "cpu"
               nominalQuota: 10
